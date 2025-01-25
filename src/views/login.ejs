@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container vh-100 d-flex justify-content-center align-items-center">
+        <div class="card shadow p-4 rounded-4" style="max-width: 400px; width: 100%;">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold">Login</h3>
+                <p class="text-muted">Access your account</p>
+            </div>
+
+            <!-- Error Handling -->
+            <% if (errorMessage) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%= errorMessage %>
+                </div>
+            <% } %>
+
+            <form action="/login" method="POST">
+                <!-- Username or Email with Icon -->
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username or Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Enter your username or email" 
+                            required>
+                    </div>
+                </div>
+
+                <!-- Password with Icon -->
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Enter your password" 
+                            required>
+                    </div>
+                </div>
+
+                <!-- Forgot Password Link -->
+                <div class="mb-3 text-end">
+                    <a href="/forgot-password" class="text-decoration-none small">Forgot Password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary rounded-pill">Login</button>
+                </div>
+
+                <!-- Signup Option -->
+                <div class="text-center mt-3">
+                    <p class="small text-muted">Don't have an account? <a href="/signup" class="text-decoration-none">Sign Up</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (Optional, for interactivity) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

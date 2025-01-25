@@ -2,7 +2,6 @@ const express = require('express');
 const { fetchData } = require('../services/dataService');
 const router = express.Router();
 
-// API endpoint to fetch data
 router.get('/data', async (req, res) => {
     try {
         const result = await fetchData();

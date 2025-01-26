@@ -1,6 +1,109 @@
-<form action="/signup" method="POST">
-    <h2>Signup</h2>
-    <input type="email" name="email" placeholder="Email" required />
-    <input type="password" name="password" placeholder="Password" required />
-    <button type="submit">Signup</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .toggle-password-icon {
+            font-size: 1.2rem;
+            color: #6c757d;
+            z-index: 10;
+        }
+
+        .toggle-password-icon:hover {
+            color: #495057;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container vh-100 d-flex justify-content-center align-items-center">
+        <div class="card shadow p-4 rounded-4" style="max-width: 500px; width: 100%;">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold">Sign Up</h3>
+                <p class="text-muted">Create a new account</p>
+            </div>
+
+            <% if (typeof errorMessage !=='undefined' && errorMessage) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%= errorMessage %>
+                </div>
+                <% } %>
+
+                    <form action="/signup" method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-circle"></i></span>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    placeholder="Enter your full name" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="Enter your email" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group position-relative">
+                                <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                                <input type="password" class="form-control pe-5" id="password" name="password" placeholder="Create a password" required>
+                                <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3 toggle-password-icon" style="cursor: pointer;"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <div class="input-group position-relative">
+                                <span class="input-group-text bg-light"><i class="bi bi-lock-fill"></i></span>
+                                <input type="password" class="form-control pe-5" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                                <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3 toggle-password-icon" style="cursor: pointer;"></i>
+                            </div>
+                        </div>
+                        
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success rounded-pill">Sign Up</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <p class="small text-muted">Already have an account? <a href="/login"
+                                    class="text-decoration-none">Login</a></p>
+                        </div>
+                    </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.toggle-password-icon').forEach(icon => {
+            icon.addEventListener('click', () => {
+                const input = icon.previousElementSibling; // The password input field
+
+                // Toggle the input type and icon classes
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash'); // Slashed when visible
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye'); // Normal eye when hidden
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

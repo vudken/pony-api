@@ -1,6 +1,4 @@
 const axios = require('axios');
-const fs = require("fs");
-
 const url = `http://212.93.127.226:9280/`;
 
 const fetchData = async () => {

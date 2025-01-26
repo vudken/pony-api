@@ -1,0 +1,26 @@
+ body {
+     display: flex;
+     flex-direction: column;
+     min-height: 100vh;
+     margin: 0;
+ }
+
+ main {
+     flex: 1;
+ }
+
+ .table-container {
+     overflow-x: auto;
+ }
+
+ .logout-btn {
+     background-color: #17a2b8;
+     color: white;
+     border-radius: 25px;
+     font-weight: bold;
+ }
+
+ .logout-btn:hover {
+     background-color: #138496;
+     color: white;
+ }

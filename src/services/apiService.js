@@ -11,7 +11,7 @@ const fetchData = async () => {
         const description = data.description;
 
         const result = [{
-            name: "Device 1",
+            name: "Hydroponics controller",
             ph: phValue ? phValue.v : "N/A",
             ec: ecValue || "N/A",
             description: description || "No description available"

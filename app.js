@@ -5,7 +5,10 @@ const path = require('path');
 const browserSync = require('browser-sync').create();
 const connectDB = require('./src/services/dbConfig');
 const userRoutes = require('./src/routes/userRoute');
+const apiRoutes = require('./src/routes/apiRoute');
+const dashboardRoutes = require('./src/routes/dashboardRoute');
 const flash = require('connect-flash');
+const cors = require('cors');
 
 require('dotenv').config();
 
@@ -26,10 +29,12 @@ app.use((req, res, next) => {
     res.locals.successMessage = req.flash('success');
     next();
 });
-app.use(express.json());
+app.use('/', [userRoutes, apiRoutes, dashboardRoutes]);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', userRoutes);
+app.use(express.json());
+app.use(cors());
+
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));

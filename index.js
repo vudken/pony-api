@@ -8,4 +8,4 @@ async function main() {
         console.error("Error fetching data:", error);
     }
 }
-main();
+// main();

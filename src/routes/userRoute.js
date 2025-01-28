@@ -11,6 +11,6 @@ router.post('/login', userController.loginUser);
 router.get('/signup', userController.getSignupPage);
 router.post('/signup', userController.signupUser);
 
-router.get('/dashboard', userController.getDashboard);
+// router.get('/home',isAuthenticated, userController.getDashboard);
 
 module.exports = router;

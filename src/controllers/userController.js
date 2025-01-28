@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const userModel = require('../models/userModel');
 const { fetchData } = require('../services/apiService');
 const { isAuthenticated } = require('../middlewares/authMiddleware');
@@ -19,8 +20,8 @@ exports.loginUser = async (req, res) => {
         const isMatch = await user.comparePassword(password);
 
         if (isMatch) {
-            req.session.user = { email: user.email }; // Log the user in
-            res.redirect('/dashboard'); // Redirect immediately to dashboard
+            req.session.user = { email: user.email };
+            res.redirect('/home');
         } else {
             res.redirect('/login?error=Invalid credentials');
         }
@@ -38,17 +39,42 @@ exports.getSignupPage = (req, res) => {
 };
 
 exports.signupUser = async (req, res) => {
-    const newUser = new userModel(req.body);
-    await newUser.save();
-    res.send('Signup successful!');
+    const { email, password } = req.body;
+
+    try {
+        // Check if the user already exists
+        const existingUser = await userModel.findOne({ email });
+        if (existingUser) {
+            req.flash('error', 'Email is already in use.');
+            return res.redirect('/signup'); // Redirect back to the signup page
+        }
+
+        // Create a new user (password will be hashed automatically by pre('save'))
+        const newUser = new userModel({ email, password });
+        await newUser.save();
+
+        req.flash('success', 'User registered successfully!');
+        res.redirect('/home'); // Redirect to the home page after successful signup
+    } catch (error) {
+        console.error('Error during user signup:', error);
+
+        // Handle duplicate key error explicitly (just in case)
+        if (error.code === 11000) {
+            req.flash('error', 'Email is already in use.');
+            return res.redirect('/signup');
+        }
+
+        req.flash('error', 'An error occurred during signup. Please try again.');
+        res.redirect('/signup');
+    }
 };
 
 exports.getDashboard = async (req, res) => {
-    // try {
-    // const data = await fetchData(); // Try fetching data
-    res.render('dashboard'); // Pass data and null error
-    // } catch (error) {
-    //     console.error('Error fetching data:', error.message);
-    //     res.render('dashboard', { data: [], error: 'Failed to fetch data. Please try again later.' }); // Pass empty data and error message
-    // }
+    return res.redirect('/home');
 };
+
+// exports.signupUser = async (req, res) => {
+//     const newUser = new userModel(req.body);
+//     await newUser.save();
+//     res.redirect('/home');
+// };

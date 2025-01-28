@@ -33,6 +33,11 @@ router.get('/admin', (req, res) => {
     res.render('dashboard', { section: 'admin' });
 });
 
+router.get('/stages', (req, res) => {
+    res.render('dashboard', { section: 'stages' });
+});
+
+
 router.get('/calendar', (req, res) => {
     res.render('dashboard', { section: 'calendar', data: [] });
 });

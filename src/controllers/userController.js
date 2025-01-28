@@ -53,8 +53,8 @@ exports.signupUser = async (req, res) => {
         const newUser = new userModel({ email, password });
         await newUser.save();
 
-        req.flash('success', 'User registered successfully!');
-        res.redirect('/home'); // Redirect to the home page after successful signup
+        req.flash('success', 'User registered successfully! Please log in.');
+        res.redirect('/login'); // Redirect to login page after successful signup
     } catch (error) {
         console.error('Error during user signup:', error);
 
@@ -68,6 +68,7 @@ exports.signupUser = async (req, res) => {
         res.redirect('/signup');
     }
 };
+
 
 exports.getDashboard = async (req, res) => {
     return res.redirect('/home');

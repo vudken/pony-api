@@ -12,6 +12,9 @@
   "type": "commonjs",
   "description": "",
   "dependencies": {
+    "@fullcalendar/bootstrap": "^6.1.15",
+    "@fullcalendar/core": "^6.1.15",
+    "@fullcalendar/daygrid": "^6.1.15",
     "ajax": "^0.0.4",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",

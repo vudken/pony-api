@@ -1,0 +1,71 @@
+<!-- stages.ejs -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="text-white">Production Stages</h2>
+            <div class="stage-card p-4 rounded bg-dark text-white">
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Stage Name</th>
+                            <th>Duration (Days)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stage-list">
+                    </tbody>
+                </table>
+                <button class="btn btn-success mt-3" onclick="addStage()">Add New Stage</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let stages = [
+        { name: 'Vegetation', duration: 28 },
+        { name: 'Adaptation', duration: 5 },
+        { name: 'Pre-flowering', duration: 28 },
+        { name: 'Intercycle 1', duration: 2 },
+        { name: 'Flowering 1', duration: 25 },
+        { name: 'Intercycle 2', duration: 2 },
+        { name: 'Flowering 2', duration: 10 },
+        { name: 'Flush (Cleaning)', duration: 3 }
+    ];
+
+    function renderStages() {
+        let stageList = document.getElementById('stage-list');
+        stageList.innerHTML = '';
+        stages.forEach((stage, index) => {
+            stageList.innerHTML += `
+                <tr>
+                    <td>${stage.name}</td>
+                    <td>${stage.duration}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="removeStage(${index})">Remove</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function addStage() {
+        let stageName = prompt("Enter stage name:");
+        let stageDuration = parseInt(prompt("Enter duration in days:"));
+        if (stageName && !isNaN(stageDuration) && stageDuration > 0) {
+            stages.push({ name: stageName, duration: stageDuration });
+            renderStages();
+        } else {
+            alert("Invalid input. Please enter a valid name and duration.");
+        }
+    }
+
+    function removeStage(index) {
+        if (confirm("Are you sure you want to remove this stage?")) {
+            stages.splice(index, 1);
+            renderStages();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", renderStages);
+</script>

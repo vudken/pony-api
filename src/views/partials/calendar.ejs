@@ -1,0 +1,51 @@
+<!-- calendar.ejs -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="calendar-card bg-dark p-4 rounded">
+                <div id='calendar'></div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <h2 class="text-white">Hydroponic Grow Calendar</h2>
+            <div class="event-list p-3 rounded bg-dark">
+                <h5 class="text-light">Production Stages</h5>
+                <ul class="list-unstyled text-white">
+                    <li class="border-bottom py-2"><span class="badge bg-primary">28 days</span> Vegetation</li>
+                    <li class="border-bottom py-2"><span class="badge bg-warning">5 days</span> Adaptation</li>
+                    <li class="border-bottom py-2"><span class="badge bg-success">28 days</span> Pre-flowering</li>
+                    <li class="border-bottom py-2"><span class="badge bg-secondary">2 days</span> Intercycle 1</li>
+                    <li class="border-bottom py-2"><span class="badge bg-danger">25 days</span> Flowering 1</li>
+                    <li class="border-bottom py-2"><span class="badge bg-info">2 days</span> Intercycle 2</li>
+                    <li class="border-bottom py-2"><span class="badge bg-dark">10 days</span> Flowering 2</li>
+                    <li class="py-2"><span class="badge bg-light text-dark">3 days</span> Flush (Cleaning)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet'>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            themeSystem: 'bootstrap',
+            height: 600,
+            events: [
+                { title: 'Vegetation', start: '2025-02-01', end: '2025-02-28', color: '#007bff' },
+                { title: 'Adaptation', start: '2025-03-01', end: '2025-03-05', color: '#ffc107' },
+                { title: 'Pre-flowering', start: '2025-03-06', end: '2025-04-03', color: '#28a745' },
+                { title: 'Intercycle 1', start: '2025-04-04', end: '2025-04-05', color: '#6c757d' },
+                { title: 'Flowering 1', start: '2025-04-06', end: '2025-05-01', color: '#dc3545' },
+                { title: 'Intercycle 2', start: '2025-05-02', end: '2025-05-03', color: '#17a2b8' },
+                { title: 'Flowering 2', start: '2025-05-04', end: '2025-05-13', color: '#343a40' },
+                { title: 'Flush (Cleaning)', start: '2025-05-14', end: '2025-05-16', color: '#f8f9fa', textColor: '#000' }
+            ]
+        });
+        calendar.render();
+    });
+</script>

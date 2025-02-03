@@ -37,9 +37,8 @@ router.get('/stages', (req, res) => {
     res.render('dashboard', { section: 'stages' });
 });
 
-
 router.get('/calendar', (req, res) => {
-    res.render('dashboard', { section: 'calendar', data: [] });
+    res.render('dashboard', { section: 'calendar' });
 });
 
 router.get('/profile', isAuthenticated, (req, res) => {

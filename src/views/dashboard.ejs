@@ -264,6 +264,7 @@
                 <% try { %>
                     <%- include(`partials/${section}`) %>
                         <% } catch (error) { %>
+                            <% console.log(error); %>
                             <p class="text-warning">No section selected</p>
                             <% } %>
             </div>

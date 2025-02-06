@@ -58,8 +58,8 @@ app.listen(PORT, () => {
     browserSync.init({
         proxy: `http://localhost:${PORT}`,
         browser: ["chrome"],
-        files: ["src/**/*.*", "public/**/*.*"],
+        files: ["src/views/*.*", "public/**/*.*"],
         notify: true,
-        open: false
+        open: false,
     });
 });

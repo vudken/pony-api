@@ -1,3 +1,77 @@
+<style>
+    /* MODAL BACKDROP */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* MODAL CONTENT */
+    .modal-content {
+        background-color: #181818;
+        padding: 20px;
+        border-radius: 8px;
+        width: 400px;
+        max-width: 90%;
+        text-align: center;
+        color: white;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* MODAL TITLE */
+    .modal-title {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    /* CLOSE BUTTON */
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    /* INPUT STYLING */
+    .modal-content input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        border: 1px solid #333;
+        border-radius: 5px;
+        background: #222;
+        color: white;
+    }
+
+    /* COLOR PICKER */
+    #colorOptions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .color-circle {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        display: inline-block;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+
+    .color-circle.selected {
+        border: 2px solid white;
+    }
+</style>
 <!-- stages.ejs -->
 <div class="container-fluid">
     <div class="row">
@@ -7,65 +81,145 @@
                 <table class="table table-dark table-striped">
                     <thead>
                         <tr>
-                            <th>Stage Name</th>
+                            <th>Stage</th>
                             <th>Duration (Days)</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="stage-list">
+                        <% stages.forEach((stage, index)=> { %>
+                            <tr>
+                                <td>
+                                    <span style="display: inline-flex; align-items: center; gap: 8px;">
+                                        <span
+                                            style="width: 15px; height: 15px; background: <%= stage.color %>; border-radius: 50%; display: inline-block;"></span>
+                                        <%= stage.name %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <%= stage.duration %>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm remove-stage" data-index="<%= index %>">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }) %>
                     </tbody>
+
                 </table>
-                <button class="btn btn-success mt-3" onclick="addStage()">Add New Stage</button>
+                <!-- <button class="btn btn-success mt-3" id="add-stage">Add New Stage</button> -->
+                <button class="btn btn-success mt-3" id="add-stage-btn">Add New Stage</button>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    let stages = [
-        { name: 'Vegetation', duration: 28 },
-        { name: 'Adaptation', duration: 5 },
-        { name: 'Pre-flowering', duration: 28 },
-        { name: 'Intercycle 1', duration: 2 },
-        { name: 'Flowering 1', duration: 25 },
-        { name: 'Intercycle 2', duration: 2 },
-        { name: 'Flowering 2', duration: 10 },
-        { name: 'Flush (Cleaning)', duration: 3 }
-    ];
+<!-- MODAL BACKDROP -->
+<div id="addStageModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h4 class="modal-title">Add New Stage</h4>
 
-    function renderStages() {
-        let stageList = document.getElementById('stage-list');
-        stageList.innerHTML = '';
-        stages.forEach((stage, index) => {
-            stageList.innerHTML += `
-                <tr>
-                    <td>${stage.name}</td>
-                    <td>${stage.duration}</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm" onclick="removeStage(${index})">Remove</button>
-                    </td>
-                </tr>
-            `;
+        <!-- Stage Name -->
+        <label for="stageName">Stage Name:</label>
+        <input type="text" id="stageName" placeholder="Enter stage name" required>
+
+        <!-- Duration -->
+        <label for="stageDuration">Duration (Days):</label>
+        <input type="number" id="stageDuration" min="1" placeholder="Enter duration" required>
+
+        <!-- Color Picker -->
+        <label>Choose Color:</label>
+        <div id="colorOptions">
+            <% let colors=['#007bff', '#ffc107' , '#28a745' , '#17a2b8' , '#dc3545' , '#6610f2' , '#fd7e14' , '#6c757d'
+                , '#20c997' , '#e83e8c' ]; %>
+                <% colors.forEach(color=> { %>
+                    <span class="color-circle" data-color="<%= color %>" style="background: <%= color %>;"></span>
+                    <% }) %>
+        </div>
+        <input type="hidden" id="selectedColor" value="#007bff">
+
+        <!-- Submit Button -->
+        <button class="btn btn-primary mt-3" id="submitStage">Submit</button>
+    </div>
+</div>
+
+<script>document.addEventListener("DOMContentLoaded", function () {
+        const addStageBtn = document.getElementById("add-stage-btn");
+        const modal = document.getElementById("addStageModal");
+        const closeModal = document.querySelector(".close");
+        const submitStage = document.getElementById("submitStage");
+
+        if (!addStageBtn || !modal || !closeModal || !submitStage) {
+            console.error("One or more elements not found. Check IDs in HTML.");
+            return;
+        }
+
+        // OPEN MODAL
+        addStageBtn.addEventListener("click", function () {
+            modal.style.display = "flex"; // Use flex to center
         });
-    }
 
-    function addStage() {
-        let stageName = prompt("Enter stage name:");
-        let stageDuration = parseInt(prompt("Enter duration in days:"));
-        if (stageName && !isNaN(stageDuration) && stageDuration > 0) {
-            stages.push({ name: stageName, duration: stageDuration });
-            renderStages();
-        } else {
-            alert("Invalid input. Please enter a valid name and duration.");
-        }
-    }
+        // CLOSE MODAL
+        closeModal.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
 
-    function removeStage(index) {
-        if (confirm("Are you sure you want to remove this stage?")) {
-            stages.splice(index, 1);
-            renderStages();
-        }
-    }
+        // CLOSE MODAL ON BACKDROP CLICK
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
 
-    document.addEventListener("DOMContentLoaded", renderStages);
+        // COLOR SELECTION LOGIC
+        document.querySelectorAll(".color-circle").forEach(circle => {
+            circle.addEventListener("click", function () {
+                document.querySelectorAll(".color-circle").forEach(c => c.classList.remove("selected"));
+                this.classList.add("selected");
+                document.getElementById("selectedColor").value = this.getAttribute("data-color");
+            });
+        });
+
+        document.querySelectorAll(".remove-stage").forEach(button => {
+            button.addEventListener("click", function () {
+                let index = this.getAttribute("data-index");
+
+                // ✅ Ask user for confirmation
+                if (confirm("Are you sure you want to remove this stage?")) {
+                    fetch(`/stages/remove/${index}`, { method: "DELETE" })
+                        .then(response => response.json())
+                        .then(data => location.reload()) // ✅ Reload after successful deletion
+                        .catch(error => console.error("Error:", error));
+                }
+            });
+        });
+
+        // SUBMIT FORM
+        submitStage.addEventListener("click", function () {
+            let name = document.getElementById("stageName").value.trim();
+            let duration = parseInt(document.getElementById("stageDuration").value);
+            let color = document.getElementById("selectedColor").value;
+
+            if (!/^[A-Za-z\s]+$/.test(name)) {
+                alert("Stage name must contain only letters and spaces.");
+                return;
+            }
+            if (isNaN(duration) || duration < 1) {
+                alert("Duration must be a number greater than 1.");
+                return;
+            }
+
+            fetch("/stages/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, duration, color })
+            })
+                .then(response => response.json())
+                .then(data => location.reload())
+                .catch(error => console.error("Error:", error));
+        });
+    });
 </script>

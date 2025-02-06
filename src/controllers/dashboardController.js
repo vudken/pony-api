@@ -88,11 +88,32 @@ exports.fetchStages = (req, res) => {
     }
 };
 
+// exports.addStage = (req, res) => {
+//     try {
+//         const { name, duration, color } = req.body;
+//         if (!name || !duration || isNaN(duration)) {
+//             return res.status(400).json({ error: "Invalid stage data" });
+//         }
+
+//         let stages = getStagesJSON();
+//         stages.push({ name, duration, color });
+//         saveStagesJSON(stages);
+
+//         res.json({ success: true, stages });
+//     } catch (error) {
+//         console.error("Error adding stage:", error);
+//         res.status(500).json({ error: "Failed to add stage" });
+//     }
+// };
+
+// ✅ API-Like Route: Add New Stage
 // ✅ API-Like Route: Add New Stage
 exports.addStage = (req, res) => {
     try {
         const { name, duration, color } = req.body;
-        if (!name || !duration || isNaN(duration)) {
+
+        // Validate Inputs
+        if (!name || !duration || isNaN(duration) || !/^#[0-9A-F]{6}$/i.test(color)) {
             return res.status(400).json({ error: "Invalid stage data" });
         }
 
@@ -107,6 +128,7 @@ exports.addStage = (req, res) => {
     }
 };
 
+
 // ✅ API-Like Route: Delete Stage
 exports.removeStage = (req, res) => {
     try {
@@ -114,8 +136,14 @@ exports.removeStage = (req, res) => {
         if (isNaN(index)) return res.status(400).json({ error: "Invalid index" });
 
         let stages = getStagesJSON();
-        stages.splice(index, 1);
-        saveStagesJSON(stages);
+
+        // ✅ Ensure index exists before removing
+        if (index < 0 || index >= stages.length) {
+            return res.status(404).json({ error: "Stage not found" });
+        }
+
+        stages.splice(index, 1);  // ✅ Remove the stage from array
+        saveStagesJSON(stages);   // ✅ Save updated stages.json
 
         res.json({ success: true, stages });
     } catch (error) {

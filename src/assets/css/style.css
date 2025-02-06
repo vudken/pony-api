@@ -21,10 +21,19 @@ body {
 }
 
 /* CALENDAR FIX */
+.calendar-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 100px); /* Adjust based on navbar/sidebar height */
+    overflow: hidden; /* Prevents content from overflowing */
+}
+
+/* Make calendar dynamically resize */
 #calendar {
-    padding: 10px;
-    height: calc(100vh - 150px);
-    /* ✅ Ensures it fits within viewport */
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 500px; /* Prevent it from being too small */
 }
 
 /* STAGES LIST FIX */

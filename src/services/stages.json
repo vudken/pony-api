@@ -1,5 +1,42 @@
 [
-    { "name": "Vegetation", "duration": 28, "color": "#007bff" },
-    { "name": "Adaptation", "duration": 5, "color": "#ffc107" },
-    { "name": "Pre-flowering", "duration": 28, "color": "#28a745" }
+  {
+    "name": "Vegetation",
+    "duration": 28,
+    "color": "#007bff"
+  },
+  {
+    "name": "Adaptation",
+    "duration": 5,
+    "color": "#ffc107"
+  },
+  {
+    "name": "Pre-flowering",
+    "duration": 28,
+    "color": "#28a745"
+  },
+  {
+    "name": "Intercycle 1",
+    "duration": 2,
+    "color": "#28a745"
+  },
+  {
+    "name": "Flowering 1",
+    "duration": 25,
+    "color": "#28a745"
+  },
+  {
+    "name": "Intercycle 2",
+    "duration": 2,
+    "color": "#28a745"
+  },
+  {
+    "name": "Flowering 2",
+    "duration": 10,
+    "color": "#28a745"
+  },
+  {
+    "name": "Flush (Cleaning)",
+    "duration": 3,
+    "color": "#28a745"
+  }
 ]

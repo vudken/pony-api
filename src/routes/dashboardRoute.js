@@ -10,8 +10,8 @@ router.get('/stages', dashboardController.getStages);
 router.get('/calendar', dashboardController.getCalendar);
 
 router.get("/stages/data", dashboardController.fetchStages);
-router.post("/stages/data", express.json(), dashboardController.addStage);
-router.delete("/stages/data/:index", dashboardController.removeStage);
+router.post("/stages/add", express.json(), dashboardController.addStage);
+router.delete("/stages/remove/:index", dashboardController.removeStage);
 
 
 

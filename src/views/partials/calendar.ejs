@@ -7,72 +7,14 @@
             </div>
         </div>
 
-        <!-- Stages Sidebar -->
         <div class="col-lg-3">
             <div class="event-list p-3 rounded bg-dark">
                 <h5 class="text-light">Production Stages</h5>
                 <ul id="stage-list" class="list-unstyled text-white">
-                    <!-- ✅ Stages will be dynamically injected here -->
                 </ul>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        fetch('/stages/data')
-            .then(response => response.json())
-            .then(stages => {
-                let stageList = document.getElementById("stage-list");
-                if (!stageList) {
-                    console.error("Element #stage-list not found!");
-                    return;
-                }
-
-                let startDate = moment("2025-02-01");
-                let events = [];
-
-                stages.forEach(stage => {
-                    let event = {
-                        title: stage.name,
-                        start: startDate.format("YYYY-MM-DD"),
-                        end: startDate.clone().add(stage.duration - 1, 'days').format("YYYY-MM-DD"),
-                        color: stage.color
-                    };
-                    events.push(event);
-                    startDate.add(stage.duration, 'days');
-
-                    let stageItem = `<li class="border-bottom py-2">
-                    <span class="badge" style="background: ${stage.color}; color: #fff;">
-                        ${stage.duration} days
-                    </span> ${stage.name}
-                </li>`;
-                    stageList.innerHTML += stageItem;
-                });
-
-                var calendarEl = document.getElementById('calendar');
-                if (!calendarEl) {
-                    console.error("Element #calendar not found!");
-                    return;
-                }
-
-                // ✅ Calculate the available height dynamically, preventing overflow
-                let viewportHeight = window.innerHeight;
-                let navbarHeight = document.querySelector(".navbar")?.offsetHeight || 0;
-                let headerHeight = document.querySelector(".calendar-card h2")?.offsetHeight || 50;
-                let availableHeight = viewportHeight - navbarHeight - headerHeight - 60; // Extra margin
-
-                var calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    themeSystem: 'bootstrap',
-                    height: Math.max(availableHeight, 600), // ✅ Prevents going too small
-                    events: events
-                });
-
-                calendar.render();
-            })
-            .catch(error => console.error("Failed to load calendar data:", error));
-    });
-
-</script>
+<script src="assets/js/calendar.js"></script>

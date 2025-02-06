@@ -12,6 +12,8 @@ router.get('/calendar', dashboardController.getCalendar);
 router.get("/stages/data", dashboardController.fetchStages);
 router.post("/stages/add", express.json(), dashboardController.addStage);
 router.delete("/stages/remove/:index", dashboardController.removeStage);
+router.delete("/stages/remove-all", dashboardController.removeAllStages);
+router.post("/stages/reorder", express.json(), dashboardController.reorderStages);
 
 
 

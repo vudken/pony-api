@@ -71,8 +71,52 @@
     .color-circle.selected {
         border: 2px solid white;
     }
+
+    .stage-card {
+        max-height: 75vh;
+        /* ✅ Makes the table take up to 75% of the viewport height */
+        overflow-y: auto;
+        /* ✅ Enables scrolling if content overflows */
+        margin-bottom: 1rem;
+        /* ✅ Adds spacing below the table */
+        position: relative;
+        /* ✅ Ensures button is positioned properly */
+    }
+
+    .stage-card::-webkit-scrollbar {
+        width: 8px;
+        /* ✅ Slimmer scrollbar */
+    }
+
+    .stage-card::-webkit-scrollbar-track {
+        background: #222;
+        /* ✅ Dark background to blend with UI */
+        border-radius: 10px;
+    }
+
+    .stage-card::-webkit-scrollbar-thumb {
+        background: #555;
+        /* ✅ Modern grey thumb */
+        border-radius: 10px;
+    }
+
+    .stage-card::-webkit-scrollbar-thumb:hover {
+        background: #777;
+        /* ✅ Lighter color on hover */
+    }
+
+    .stage-buttons {
+        display: flex;
+        justify-content: flex-end;
+        /* Push buttons to the right */
+        gap: 10px;
+        /* Add some spacing between buttons */
+        padding-top: 10px;
+        /* Space from the table */
+    }
 </style>
-<!-- stages.ejs -->
+
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-12">
@@ -88,7 +132,7 @@
                     </thead>
                     <tbody id="stage-list">
                         <% stages.forEach((stage, index)=> { %>
-                            <tr>
+                            <tr data-index="<%= index %>">
                                 <td>
                                     <span style="display: inline-flex; align-items: center; gap: 8px;">
                                         <span
@@ -100,17 +144,23 @@
                                     <%= stage.duration %>
                                 </td>
                                 <td>
-                                    <button class="btn btn-danger btn-sm remove-stage" data-index="<%= index %>">
-                                        Remove
+                                    <button class="btn btn-danger btn-sm remove-stage"
+                                        data-index="<%= index %>">Remove</button>
+                                </td>
+                                <td class="sort-controls">
+                                    <button class="btn btn-link move-stage" data-index="<%= index %>">
+                                        <i class="bi bi-arrows-expand"></i>
                                     </button>
                                 </td>
                             </tr>
                             <% }) %>
                     </tbody>
-
                 </table>
                 <!-- <button class="btn btn-success mt-3" id="add-stage">Add New Stage</button> -->
-                <button class="btn btn-success mt-3" id="add-stage-btn">Add New Stage</button>
+            </div>
+            <div class="stage-buttons d-flex justify-content-between">
+                <button class="btn btn-success" id="add-stage-btn">Add New Stage</button>
+                <button class="btn btn-danger" id="remove-all-stages">Remove All Stages</button>
             </div>
         </div>
     </div>
@@ -133,93 +183,16 @@
         <!-- Color Picker -->
         <label>Choose Color:</label>
         <div id="colorOptions">
-            <% let colors=['#007bff', '#ffc107' , '#28a745' , '#17a2b8' , '#dc3545' , '#6610f2' , '#fd7e14' , '#6c757d'
-                , '#20c997' , '#e83e8c' ]; %>
-                <% colors.forEach(color=> { %>
-                    <span class="color-circle" data-color="<%= color %>" style="background: <%= color %>;"></span>
-                    <% }) %>
+            <% colors.forEach(color=> { %>
+                <span class="color-circle" data-color="<%= color %>" style="background: <%= color %>;"></span>
+                <% }) %>
         </div>
-        <input type="hidden" id="selectedColor" value="#007bff">
+        <input type="hidden" id="selectedColor" value="<%= colors[0] %>">
 
         <!-- Submit Button -->
         <button class="btn btn-primary mt-3" id="submitStage">Submit</button>
     </div>
 </div>
 
-<script>document.addEventListener("DOMContentLoaded", function () {
-        const addStageBtn = document.getElementById("add-stage-btn");
-        const modal = document.getElementById("addStageModal");
-        const closeModal = document.querySelector(".close");
-        const submitStage = document.getElementById("submitStage");
-
-        if (!addStageBtn || !modal || !closeModal || !submitStage) {
-            console.error("One or more elements not found. Check IDs in HTML.");
-            return;
-        }
-
-        // OPEN MODAL
-        addStageBtn.addEventListener("click", function () {
-            modal.style.display = "flex"; // Use flex to center
-        });
-
-        // CLOSE MODAL
-        closeModal.addEventListener("click", function () {
-            modal.style.display = "none";
-        });
-
-        // CLOSE MODAL ON BACKDROP CLICK
-        window.addEventListener("click", function (event) {
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        });
-
-        // COLOR SELECTION LOGIC
-        document.querySelectorAll(".color-circle").forEach(circle => {
-            circle.addEventListener("click", function () {
-                document.querySelectorAll(".color-circle").forEach(c => c.classList.remove("selected"));
-                this.classList.add("selected");
-                document.getElementById("selectedColor").value = this.getAttribute("data-color");
-            });
-        });
-
-        document.querySelectorAll(".remove-stage").forEach(button => {
-            button.addEventListener("click", function () {
-                let index = this.getAttribute("data-index");
-
-                // ✅ Ask user for confirmation
-                if (confirm("Are you sure you want to remove this stage?")) {
-                    fetch(`/stages/remove/${index}`, { method: "DELETE" })
-                        .then(response => response.json())
-                        .then(data => location.reload()) // ✅ Reload after successful deletion
-                        .catch(error => console.error("Error:", error));
-                }
-            });
-        });
-
-        // SUBMIT FORM
-        submitStage.addEventListener("click", function () {
-            let name = document.getElementById("stageName").value.trim();
-            let duration = parseInt(document.getElementById("stageDuration").value);
-            let color = document.getElementById("selectedColor").value;
-
-            if (!/^[A-Za-z\s]+$/.test(name)) {
-                alert("Stage name must contain only letters and spaces.");
-                return;
-            }
-            if (isNaN(duration) || duration < 1) {
-                alert("Duration must be a number greater than 1.");
-                return;
-            }
-
-            fetch("/stages/add", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, duration, color })
-            })
-                .then(response => response.json())
-                .then(data => location.reload())
-                .catch(error => console.error("Error:", error));
-        });
-    });
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script src="assets/js/stages.js"></script>

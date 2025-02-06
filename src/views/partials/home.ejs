@@ -22,7 +22,11 @@
                         <td><span class="badge badge-primary"><%= item.ph %></span></td>
                         <td><span class="badge badge-info"><%= item.ec %></span></td>
                         <td><%= item.description %></td>
-                        <td>--</td>
+                        <td>
+                            <span class="badge" style="background: <%= item.stage.color %>; color: white;">
+                                <%= item.stage.name %>
+                            </span>
+                        </td>
                     </tr>
                 <% }) %>
             <% } else { %>

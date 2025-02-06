@@ -6,12 +6,15 @@ const { getStagesPage } = require('../controllers/dashboardController');
 const { isAuthenticated } = require('../middlewares/authMiddleware');
 
 router.get('/home', dashboardController.getHome);
-
-router.get('/admin', dashboardController.getAdmin);
-
 router.get('/stages', dashboardController.getStages);
-
 router.get('/calendar', dashboardController.getCalendar);
+
+router.get("/stages/data", dashboardController.fetchStages);
+router.post("/stages/data", express.json(), dashboardController.addStage);
+router.delete("/stages/data/:index", dashboardController.removeStage);
+
+
+
 
 router.get('/profile', isAuthenticated, dashboardController.getProfile);
 

@@ -1,0 +1,5 @@
+[
+    { "name": "Vegetation", "duration": 28, "color": "#007bff" },
+    { "name": "Adaptation", "duration": 5, "color": "#ffc107" },
+    { "name": "Pre-flowering", "duration": 28, "color": "#28a745" }
+]

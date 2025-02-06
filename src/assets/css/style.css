@@ -1,0 +1,36 @@
+/* GLOBAL STYLES */
+html,
+body {
+    overflow: hidden;
+    /* ✅ Removes unnecessary scrollbars */
+    height: 100vh;
+    /* ✅ Ensures full viewport coverage */
+    margin: 0;
+    padding: 0;
+    /* ✅ Optional: Better typography */
+    background-color: #101010;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* CONTAINER FIXES */
+.container-fluid {
+    height: 100vh;
+    /* ✅ Prevents layout from overflowing */
+    overflow: hidden;
+}
+
+/* CALENDAR FIX */
+#calendar {
+    padding: 10px;
+    height: calc(100vh - 150px);
+    /* ✅ Ensures it fits within viewport */
+}
+
+/* STAGES LIST FIX */
+.event-list {
+    max-height: 80vh;
+    /* ✅ Prevents list from overflowing */
+    overflow-y: auto;
+    /* ✅ Enables scrolling for long lists */
+}

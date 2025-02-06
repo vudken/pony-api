@@ -14,14 +14,21 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Connect to Database
+// 🔹 1️⃣ Connect to Database (Ensures DB is Ready First)
 connectDB();
 
-// Set View Engine
+// 🔹 2️⃣ Serve Static Files (Before Middleware)
+app.use('/assets', express.static(path.join(__dirname, 'src/assets')));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 🔹 3️⃣ Set View Engine (EJS)
+const expressLayouts = require('express-ejs-layouts');
+app.use(expressLayouts);
+app.set('layout', 'layout'); // ✅ Default layout file
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
-// Middleware Setup
+// 🔹 4️⃣ Middleware Setup
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
@@ -33,24 +40,21 @@ app.use(session({
 }));
 app.use(flash());
 
-// Flash Messages Middleware
+// 🔹 5️⃣ Flash Messages Middleware
 app.use((req, res, next) => {
     res.locals.errorMessage = req.flash('error');
     res.locals.successMessage = req.flash('success');
     next();
 });
 
-// Serve Static Files
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Load Routes
+// 🔹 6️⃣ Load Routes (AFTER Middleware & Static Files)
 app.use('/', [userRoutes, apiRoutes, dashboardRoutes]);
 
-// Start Server
+// 🔹 7️⃣ Start Server
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`✅ Server running at http://localhost:${PORT}`);
 
-    // Initialize BrowserSync for live reload
+    // 🔹 8️⃣ Initialize BrowserSync for Live Reload
     browserSync.init({
         proxy: `http://localhost:${PORT}`,
         browser: ["chrome"],

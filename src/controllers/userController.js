@@ -5,8 +5,9 @@ const { isAuthenticated } = require('../middlewares/authMiddleware');
 
 exports.getLoginPage = (req, res) => {
     const errorMessage = req.query.error || null;
-    res.render('login', { errorMessage });
+    res.render('login', { title: 'Login', layout: false, errorMessage });
 };
+
 
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
@@ -35,7 +36,7 @@ exports.getSignupPage = (req, res) => {
     const errorMessage = req.session.error || null;
     req.session.error = null; // Clear the error after retrieving it
 
-    res.render('signup', { errorMessage });
+    res.render('signup', { title: 'Signup', layout: false, errorMessage });
 };
 
 exports.signupUser = async (req, res) => {
@@ -69,13 +70,6 @@ exports.signupUser = async (req, res) => {
     }
 };
 
-
-exports.getDashboard = async (req, res) => {
-    return res.redirect('/home');
+exports.getDashboard = (req, res) => {
+    res.redirect('/home');
 };
-
-// exports.signupUser = async (req, res) => {
-//     const newUser = new userModel(req.body);
-//     await newUser.save();
-//     res.redirect('/home');
-// };

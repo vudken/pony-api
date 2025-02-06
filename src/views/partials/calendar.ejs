@@ -1,51 +1,78 @@
-<!-- calendar.ejs -->
 <div class="container-fluid">
     <div class="row">
+        <!-- Calendar Section -->
         <div class="col-lg-9">
             <div class="calendar-card bg-dark p-4 rounded">
-                <div id='calendar'></div>
+                <div id="calendar" class="p-3"></div> <!-- ✅ The calendar will render here -->
             </div>
         </div>
 
+        <!-- Stages Sidebar -->
         <div class="col-lg-3">
-            <h2 class="text-white">Hydroponic Grow Calendar</h2>
             <div class="event-list p-3 rounded bg-dark">
                 <h5 class="text-light">Production Stages</h5>
-                <ul class="list-unstyled text-white">
-                    <li class="border-bottom py-2"><span class="badge bg-primary">28 days</span> Vegetation</li>
-                    <li class="border-bottom py-2"><span class="badge bg-warning">5 days</span> Adaptation</li>
-                    <li class="border-bottom py-2"><span class="badge bg-info">28 days</span> Pre-flowering</li>
-                    <li class="border-bottom py-2"><span class="badge bg-secondary">2 days</span> Intercycle 1</li>
-                    <li class="border-bottom py-2"><span class="badge bg-success">25 days</span> Flowering 1</li>
-                    <li class="border-bottom py-2"><span class="badge bg-secondary">2 days</span> Intercycle 2</li>
-                    <li class="border-bottom py-2"><span class="badge bg-success">10 days</span> Flowering 2</li>
-                    <li class="py-2"><span class="badge bg-light text-dark">3 days</span> Flush (Cleaning)</li>
+                <ul id="stage-list" class="list-unstyled text-white">
+                    <!-- ✅ Stages will be dynamically injected here -->
                 </ul>
             </div>
         </div>
     </div>
 </div>
 
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet'>
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            themeSystem: 'bootstrap',
-            height: 600,
-            events: [
-                { title: 'Vegetation', start: '2025-02-01', end: '2025-02-28', color: '#007bff' },
-                { title: 'Adaptation', start: '2025-03-01', end: '2025-03-05', color: '#ffc107' },
-                { title: 'Pre-flowering', start: '2025-03-06', end: '2025-04-03', color: '#28a745' },
-                { title: 'Intercycle 1', start: '2025-04-04', end: '2025-04-05', color: '#6c757d' },
-                { title: 'Flowering 1', start: '2025-04-06', end: '2025-05-01', color: '#dc3545' },
-                { title: 'Intercycle 2', start: '2025-05-02', end: '2025-05-03', color: '#17a2b8' },
-                { title: 'Flowering 2', start: '2025-05-04', end: '2025-05-13', color: '#343a40' },
-                { title: 'Flush (Cleaning)', start: '2025-05-14', end: '2025-05-16', color: '#f8f9fa', textColor: '#000' }
-            ]
-        });
-        calendar.render();
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/stages/data')
+            .then(response => response.json())
+            .then(stages => {
+                let stageList = document.getElementById("stage-list");
+                if (!stageList) {
+                    console.error("Element #stage-list not found!");
+                    return;
+                }
+
+                let startDate = moment("2025-02-01");
+                let events = [];
+
+                stages.forEach(stage => {
+                    let event = {
+                        title: stage.name,
+                        start: startDate.format("YYYY-MM-DD"),
+                        end: startDate.clone().add(stage.duration - 1, 'days').format("YYYY-MM-DD"),
+                        color: stage.color
+                    };
+                    events.push(event);
+                    startDate.add(stage.duration, 'days');
+
+                    let stageItem = `<li class="border-bottom py-2">
+                    <span class="badge" style="background: ${stage.color}; color: #fff;">
+                        ${stage.duration} days
+                    </span> ${stage.name}
+                </li>`;
+                    stageList.innerHTML += stageItem;
+                });
+
+                var calendarEl = document.getElementById('calendar');
+                if (!calendarEl) {
+                    console.error("Element #calendar not found!");
+                    return;
+                }
+
+                // ✅ Calculate the available height dynamically, preventing overflow
+                let viewportHeight = window.innerHeight;
+                let navbarHeight = document.querySelector(".navbar")?.offsetHeight || 0;
+                let headerHeight = document.querySelector(".calendar-card h2")?.offsetHeight || 50;
+                let availableHeight = viewportHeight - navbarHeight - headerHeight - 60; // Extra margin
+
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    themeSystem: 'bootstrap',
+                    height: Math.max(availableHeight, 600), // ✅ Prevents going too small
+                    events: events
+                });
+
+                calendar.render();
+            })
+            .catch(error => console.error("Failed to load calendar data:", error));
     });
+
 </script>

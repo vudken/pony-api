@@ -50,42 +50,46 @@ exports.getHome = async (req, res) => {
         const data = await apiController.getApiData();
         const stages = getStagesJSON(); // Load stages from JSON
         const today = moment(); // Get today's date
-        let startDate = moment("2025-02-01"); // Define the starting date
+        const startDate = moment("2025-02-01"); // Define the start date
 
-        // Map each stage to its corresponding date range
-        const stageTimeline = stages.map(stage => {
-            const endDate = startDate.clone().add(stage.duration - 1, "days");
-            const stageData = {
-                name: stage.name,
-                color: stage.color,
-                start: startDate.clone(),
-                end: endDate.clone()
-            };
-            startDate = endDate.clone().add(1, "day"); // Move to the next stage
-            return stageData;
-        });
+        let elapsedDays = today.diff(startDate, "days"); // Total days passed
+        let cumulativeDays = 0;
+        let currentStage = { name: "Unknown", color: "#6c757d" };
+        let nextStage = null;
+        let daysLeft = "--";
 
-        // Determine the current stage
-        const currentStageIndex = stageTimeline.findIndex(stage =>
-            today.isBetween(stage.start, stage.end, null, "[]")
-        );
+        for (let i = 0; i < stages.length; i++) {
+            if (elapsedDays < cumulativeDays + stages[i].duration) {
+                // ✅ Found current stage
+                currentStage = {
+                    name: stages[i].name,
+                    color: stages[i].color,
+                };
 
-        let daysUntilNext = "--";
-        let nextStageName = "Unknown";
+                // ✅ Calculate days left
+                daysLeft = (cumulativeDays + stages[i].duration) - elapsedDays;
 
-        if (currentStageIndex !== -1 && currentStageIndex < stageTimeline.length - 1) {
-            const nextStage = stageTimeline[currentStageIndex + 1];
-            daysUntilNext = nextStage.start.diff(today, "days"); // Calculate days left
-            nextStageName = nextStage.name;
+                // ✅ Assign next stage **only if it's NOT the last stage**
+                if (i + 1 < stages.length) {
+                    nextStage = stages[i + 1];
+                } else {
+                    nextStage = null; // No next stage exists
+                }
+                break;
+            }
+            cumulativeDays += stages[i].duration;
         }
 
-        // Assign the current stage and days until the next stage to each fertilizer tank
+        // ✅ Proper fallback for last stage
+        let nextStageText = nextStage ? `${nextStage.name} in ${daysLeft} days` : "No upcoming stages";
+
+        // ✅ Assign data to the fertilizer tank
         const validatedData = data.map(item => ({
             ...item,
             ph: item.ph === "N/A" ? item.ph : parseFloat(item.ph).toFixed(2),
             ec: item.ec === "N/A" ? item.ec : parseFloat(item.ec).toFixed(2),
-            stage: currentStageIndex !== -1 ? stageTimeline[currentStageIndex] : { name: "Unknown", color: "#6c757d" },
-            description: `Next stage: ${nextStageName} in ${daysUntilNext} days`
+            stage: currentStage,
+            description: `Next stage: ${nextStageText}`
         }));
 
         res.render("partials/home", { layout: "layout", title: "Home", data: validatedData });
@@ -94,6 +98,11 @@ exports.getHome = async (req, res) => {
         res.render("partials/home", { layout: "layout", title: "Home", data: [] });
     }
 };
+
+
+
+
+
 
 
 

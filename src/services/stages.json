@@ -8,5 +8,10 @@
     "name": "Polivka",
     "duration": 4,
     "color": "#e83e8c"
+  },
+  {
+    "name": "Final boss",
+    "duration": 5,
+    "color": "#6610f2"
   }
 ]

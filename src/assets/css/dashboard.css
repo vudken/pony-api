@@ -208,3 +208,11 @@ tbody tr:hover {
         display: block;
     }
 }
+
+
+#calendar *:hover:not(.fc-event),
+#calendar *:focus:not(.fc-event) {
+    background-color: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+}

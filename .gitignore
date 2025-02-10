@@ -13,3 +13,4 @@ test/
 
 package-lock.json
 .env
+src/services/stages.json

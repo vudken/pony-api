@@ -15,6 +15,7 @@ router.delete("/stages/remove/:id", dashboardController.removeStage);
 router.delete("/stages/remove-all", dashboardController.removeAllStages);
 // router.post("/stages/reorder", express.json(), dashboardController.reorderStages);
 router.put("/stages/reorder", dashboardController.reorderStages);
+router.post("/stages/start-date", dashboardController.startDate); 
 router.post("/stages/set-start-date", dashboardController.setStartDate); 
 
 

@@ -1,6 +1,6 @@
-<div class="table-container">
+<!-- <div class="table-container">
     <div class="table-header">
-        <h4>Fertilizer Tanks</h4>
+        <h4>Fertilizer Tank</h4>
     </div>
     <table>
         <thead>
@@ -36,4 +36,70 @@
             <% } %>
         </tbody>
     </table>
+</div> -->
+
+<div class="table-container">
+    <div class="table-header">
+        <h4>Fertilizer Tank</h4>
+    </div>
+
+    <table id="fertilizer-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>PH</th>
+                <th>EC</th>
+                <th>Description</th>
+                <th>Stage</th>
+            </tr>
+        </thead>
+        <tbody id="fertilizer-body">
+            <!-- 🚀 Loading Spinner (Shown Until Data Loads) -->
+            <tr id="loading-spinner">
+                <td colspan="6" class="text-center">
+                    <i class="fa fa-spinner fa-spin fa-3x"></i> <!-- Font Awesome Spinner -->
+                    <p>Loading data...</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+    const loadingSpinner = document.getElementById("loading-spinner");
+    const tbody = document.getElementById("fertilizer-body");
+
+    try {
+        const response = await fetch("/api/data");
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.error || "Failed to fetch data");
+
+        if (data.length > 0) {
+            // ✅ Populate table dynamically
+            tbody.innerHTML = data.map((item, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td><span class="badge badge-primary">${item.ph}</span></td>
+                    <td><span class="badge badge-info">${item.ec}</span></td>
+                    <td>${item.description}</td>
+                    <td>
+                        <span class="badge" style="background: ${item.stage.color}; color: white;">
+                            ${item.stage.name}
+                        </span>
+                    </td>
+                </tr>
+            `).join("");
+        } else {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-warning">No data available</td></tr>`;
+        }
+
+    } catch (error) {
+        console.error("Error loading data:", error);
+        tbody.innerHTML = "<tr><td colspan='6' class='text-danger text-center'>Failed to load data. Try again later.</td></tr>";
+    }
+});
+</script>

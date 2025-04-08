@@ -64,6 +64,11 @@ document.addEventListener("DOMContentLoaded", function () {
         let name = document.getElementById("stageName").value.trim();
         let duration = parseInt(document.getElementById("stageDuration").value);
         let color = document.getElementById("selectedColor").value;
+        let pumpAval = parseInt(document.getElementById("pumpAml").value) || 0; 
+        let pumpBval = parseInt(document.getElementById("pumpBml").value) || 0; 
+        let pumpCval = parseInt(document.getElementById("pumpCml").value) || 0; 
+
+
         if (!/^[A-Za-z]+[A-Za-z0-9\s]*$/.test(name)) {
             alert("Stage name must start with a letter and can contain letters, numbers, and spaces.");
             return;
@@ -76,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch("/stages/add", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, duration, color })
+            body: JSON.stringify({ name, duration, color, pumps: { pumpA: pumpAval, pumpB: pumpBval, pumpC: pumpCval } })
         })
             .then(response => response.json())
             .then(data => location.reload())

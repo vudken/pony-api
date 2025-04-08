@@ -132,7 +132,7 @@
                     </thead>
                     <tbody id="stage-list">
                         <% stages.forEach((stage, index)=> { %>
-                            <tr data-index="<%= index %>">
+                            <tr data-position="<%= stage.position %>">
                                 <td>
                                     <span style="display: inline-flex; align-items: center; gap: 8px;">
                                         <span
@@ -145,7 +145,7 @@
                                 </td>
                                 <td>
                                     <button class="btn btn-danger btn-sm remove-stage"
-                                        data-index="<%= index %>">Remove</button>
+                                    data-id="<%= stage.id %>">Remove</button>
                                 </td>
                                 <td class="sort-controls">
                                     <button class="btn btn-link move-stage" data-index="<%= index %>">
@@ -189,10 +189,57 @@
         </div>
         <input type="hidden" id="selectedColor" value="<%= colors[0] %>">
 
+        <!-- Pump Options -->
+        <h4>Select Pumps:</h4>
+        <div class="pump-container">
+            <label class="pump-row">
+                <input type="checkbox" id="pumpA">
+                <span>Pump A</span>
+                <input type="number" id="pumpAml" placeholder="ml" min="0" disabled>
+            </label>
+
+            <label class="pump-row">
+                <input type="checkbox" id="pumpB">
+                <span>Pump B</span>
+                <input type="number" id="pumpBml" placeholder="ml" min="0" disabled>
+            </label>
+
+            <label class="pump-row">
+                <input type="checkbox" id="pumpC">
+                <span>Pump C</span>
+                <input type="number" id="pumpCml" placeholder="ml" min="0" disabled>
+            </label>
+        </div>
+
         <!-- Submit Button -->
         <button class="btn btn-primary mt-3" id="submitStage">Submit</button>
     </div>
 </div>
+
+<!-- <style>
+    .pump-row {
+        display: flex;
+        align-items: center;
+        /* Aligns checkbox and input field */
+        gap: 10px;
+        /* Adds spacing between checkbox and pump-label */
+    }
+</style> -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function togglePumpInput(checkboxId, inputId) {
+            document.getElementById(checkboxId).addEventListener("change", function () {
+                document.getElementById(inputId).disabled = !this.checked;
+            });
+        }
+
+        togglePumpInput("pumpA", "pumpAml");
+        togglePumpInput("pumpB", "pumpBml");
+        togglePumpInput("pumpC", "pumpCml");
+    });
+</script>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 <script src="assets/js/stages.js"></script>

@@ -3,18 +3,76 @@ const path = require("path");
 const apiController = require("./apiController");
 const stagesPath = path.join(__dirname, "../services/stages.json");
 const { STAGE_COLORS } = require("../config/constants");
+const Stage = require("../models/stageModel");
 
 // 🔄 Helper Function: Load Stages
-const getStagesJSON = () => {
+// const getStagesJSON = async () => {
+//     // try {
+//     //     if (!fs.existsSync(stagesPath)) {
+//     //         fs.writeFileSync(stagesPath, "[]", "utf-8");
+//     //     }
+//     //     const data = fs.readFileSync(stagesPath, "utf8");
+//     //     return JSON.parse(data);
+//     // } catch (error) {
+//     //     console.error("Error reading stages.json:", error);
+//     //     return [];
+//     // }
+//     // try {
+//     //     const stages = await Stage.find({}, "name duration color pumps"); // ✅ Fetch only required fields
+
+//     //     // ✅ Convert MongoDB format to simplified format (removes `_id`, `createdAt`, etc.)
+//     //     const data = stages.map(stage => ({
+//     //         name: stage.name,
+//     //         duration: stage.duration,
+//     //         color: stage.color
+//     //     }));
+//     //     console.log(data);
+//     //     return JSON.parse(data);
+//     // } catch (error) {
+//     //     console.error("Error fetching stages from MongoDB:", error);
+//     //     return []; // ✅ Return empty array on error
+//     // }
+//     try {
+//         const stages = await Stage.find({}, "name duration color pumps"); // ✅ Fetch only required fields
+
+//         // ✅ Convert MongoDB format to simplified format
+//         const data = stages.map(stage => ({
+//             name: stage.name,
+//             duration: stage.duration,
+//             color: stage.color
+//         }));
+
+//         console.log("Fetched Stages:", data); // ✅ Debugging output
+//         return data; // ✅ No need for JSON.parse() here
+//     } catch (error) {
+//         console.error("Error fetching stages from MongoDB:", error);
+//         return []; // ✅ Return empty array on error
+//     }
+// };
+
+const getStagesJSON = async () => {
     try {
-        if (!fs.existsSync(stagesPath)) {
-            fs.writeFileSync(stagesPath, "[]", "utf-8");
+        const stages = await Stage.find({}, "name duration color"); // ✅ Fetch only required fields
+
+        if (!Array.isArray(stages)) {
+            console.error("Error: MongoDB query did not return an array", stages);
+            return [];
         }
-        const data = fs.readFileSync(stagesPath, "utf8");
-        return JSON.parse(data);
+
+        return stages.map(stage => ({
+            id: stage._id,
+            name: stage.name,
+            duration: stage.duration,
+            color: stage.color,
+            pumps: {
+                pumpA: stage.pumps.pumpA,
+                pumpB: stage.pumps.pumpB,
+                pumpC: stage.pumps.pumpC
+            }
+        }));
     } catch (error) {
-        console.error("Error reading stages.json:", error);
-        return [];
+        console.error("Error fetching stages from MongoDB:", error);
+        return []; // ✅ Return empty array on error
     }
 };
 
@@ -118,14 +176,42 @@ exports.getCalendar = (req, res) => {
 };
 
 // 🔄 Stages Page Controller
-exports.getStages = (req, res) => {
+exports.getStages = async (req, res) => {
     try {
-        const stages = getStagesJSON();
+        // const stages = getStagesJSON();
+        const stages = await getStagesJSON();
+
         res.render("partials/stages", { layout: "layout", title: "Stages", stages, colors: STAGE_COLORS });
     } catch (error) {
         console.error("Error loading stages:", error);
         res.status(500).send("Error loading stages");
     }
+
+    // try {
+    //     const stages = await getStagesJSON(); // ✅ Ensure we properly await data
+
+    //     console.log("Fetched Stages:", stages); // ✅ Debugging output
+    //     if (!Array.isArray(stages)) {
+    //         console.error("Error: Fetched stages is not an array", stages);
+    //         return res.status(500).json({ error: "Failed to fetch stages" });
+    //     }
+
+    //     res.render("partials/stages", { stages }); // ✅ Ensure stages is passed correctly
+    // } catch (error) {
+    //     console.error("Error fetching stages:", error);
+    //     res.status(500).json({ error: "Failed to fetch stages" });
+    // }
+
+    // try {
+    //     const stages = await getStagesJSON(); // ✅ Fetch transformed stage data
+
+    //     const colors = ["#ffc107", "#6610f2", "#e83e8c", "#17a2b8", "#28a745"]; // ✅ Define color options
+
+    //     res.render("partials/stages", { stages, colors }); // ✅ Pass colors to EJS template
+    // } catch (error) {
+    //     console.error("Error fetching stages:", error);
+    //     res.status(500).json({ error: "Failed to fetch stages" });
+    // }
 };
 
 // 👤 Profile Page Controller
@@ -139,9 +225,16 @@ exports.getProfile = (req, res) => {
 };
 
 // ✅ API-Like Route: Fetch Stages Data
-exports.fetchStages = (req, res) => {
+exports.fetchStages = async (req, res) => {
+    // try {
+    //     const stages = getStagesJSON();
+    //     res.json(stages);
+    // } catch (error) {
+    //     console.error("Error fetching stages:", error);
+    //     res.status(500).json({ error: "Failed to fetch stages" });
+    // }
     try {
-        const stages = getStagesJSON();
+        const stages = await Stage.find({}); // ✅ Fetch all stages from MongoDB
         res.json(stages);
     } catch (error) {
         console.error("Error fetching stages:", error);
@@ -169,20 +262,42 @@ exports.fetchStages = (req, res) => {
 
 // ✅ API-Like Route: Add New Stage
 // ✅ API-Like Route: Add New Stage
-exports.addStage = (req, res) => {
-    try {
-        const { name, duration, color } = req.body;
+exports.addStage = async (req, res) => {
+    // try {
+    //     const { name, duration, color } = req.body;
 
-        // Validate Inputs
+    //     // Validate Inputs
+    //     if (!name || !duration || isNaN(duration) || !/^#[0-9A-F]{6}$/i.test(color)) {
+    //         return res.status(400).json({ error: "Invalid stage data" });
+    //     }
+
+    //     let stages = getStagesJSON();
+    //     stages.push({ name, duration, color });
+    //     saveStagesJSON(stages);
+
+    //     res.json({ success: true, stages });
+    // } catch (error) {
+    //     console.error("Error adding stage:", error);
+    //     res.status(500).json({ error: "Failed to add stage" });
+    // }
+    try {
+        const { name, duration, color, pumps } = req.body;
+
+        // Basic validation
         if (!name || !duration || isNaN(duration) || !/^#[0-9A-F]{6}$/i.test(color)) {
             return res.status(400).json({ error: "Invalid stage data" });
         }
 
-        let stages = getStagesJSON();
-        stages.push({ name, duration, color });
-        saveStagesJSON(stages);
+        const parsedPumps = {
+            pumpA: Number(pumps.pumpA) || 0,
+            pumpB: Number(pumps.pumpB) || 0,
+            pumpC: Number(pumps.pumpC) || 0
+        };
+        
+        const newStage = new Stage({ name, duration, color, pumps: parsedPumps });
 
-        res.json({ success: true, stages });
+        await newStage.save();
+        res.status(201).json({ success: true, stage: newStage });
     } catch (error) {
         console.error("Error adding stage:", error);
         res.status(500).json({ error: "Failed to add stage" });
